@@ -1,0 +1,164 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int A[63];
+int B[63];
+int C[63];
+
+int topoA = 0;
+int topoB = 0;
+int topoC = 0;
+
+void pushA(int n) {
+    A[topoA] = n;
+    topoA++;
+}
+
+int popA() {
+    topoA--;
+    return A[topoA];
+}
+
+int peekA() {
+    return A[topoA - 1];
+}
+
+void pushB(int n) {
+    B[topoB] = n;
+    topoB++;
+}
+
+int popB() {
+    topoB--;
+    return B[topoB];
+
+}
+
+int peekB() {
+    return B[topoB - 1];
+}
+
+void pushC(int n) {
+    C[topoC] = n;
+    topoC++;
+}
+
+int popC() {
+    topoC--;
+    return C[topoC];
+
+}
+
+int peekC() {
+    return C[topoC - 1];
+}
+
+/*Mostra o conteudo das pilhas A B C*/
+void show() {
+    int i;
+    printf("A:");
+    for (i = 0; i < topoA; i++) {
+        printf("%d ", A[i]);
+    }
+    printf("\nB:");
+    for (i = 0; i < topoB; i++) {
+        printf("%d ", B[i]);
+    }
+    printf("\nC:");
+    for (i = 0; i < topoC; i++) {
+        printf("%d ", C[i]);
+    }
+    printf("\n");
+}
+
+void moverAB() {
+    if (topoA == 0) {
+        pushA(popB());
+    } else if (topoB == 0) {
+        pushB(popA());
+    } else if (peekA() < peekB()) {
+        pushB(popA());
+    } else if (peekB() < peekA()) {
+        pushA(popB());
+    }
+
+}
+
+void moverAC() {
+    if (topoA == 0) {
+        pushA(popC());
+    } else if (topoC == 0) {
+        pushC(popA());
+    } else if (peekA() < peekC()) {
+        pushC(popA());
+    } else if (peekC() < peekA()) {
+        pushA(popC());
+    }
+
+}
+
+void moverBC() {
+    if (topoC == 0) {
+        pushC(popB());
+    } else if (topoB == 0) {
+        pushB(popC());
+    } else if (peekC() < peekB()) {
+        pushB(popC());
+    } else if (peekB() < peekC()) {
+        pushC(popB());
+    }
+}
+
+int main(int argc, char** argv[]) {
+
+    int Discos, i, ndm=0;
+
+    printf("Escolha o Numero de Discos de 1 a 64 \n");
+
+
+    while ((Discos < 1) || (Discos > 64)) {
+        scanf("\n%d", &Discos);
+    }
+
+
+    for (i = Discos; i >= 1; i--) {
+        pushA(i);
+    }
+
+    show();
+
+    if (Discos % 2 == 0) {
+        while (topoC < Discos) {
+            moverAB();
+            ndm++;
+            show();
+            if (topoC == Discos)break;
+            moverAC();
+             ndm++;
+            show();
+            if (topoC == Discos)break;
+            moverBC();
+             ndm++;
+            show();
+        }
+    } else {
+        while (topoC < Discos) {
+            moverAC();
+             ndm++;
+            show();
+            if (topoC == Discos)break;
+            moverAB();
+             ndm++;
+            show();
+            if (topoC == Discos)break;
+            moverBC();
+             ndm++;
+            show();
+        }
+    }
+    printf("Numero de Movimentos realizados \n");
+    printf("%d", ndm);
+    
+    
+    return (EXIT_SUCCESS);
+}
